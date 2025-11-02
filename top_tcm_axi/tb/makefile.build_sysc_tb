@@ -2,11 +2,11 @@
 # Variables
 ###############################################################################
 VERILATOR_SRC ?= /usr/share/verilator/include
-SYSTEMC_HOME  ?= /usr/local/systemc-2.3.1
+SYSTEMC_HOME  ?= /usr/local/systemc-2.3.3
 
 OBJ_DIR      ?= obj/
 EXE_DIR      ?= build/
-SRC_DIR      ?= ./
+SRC_DIR      ?= ./ $(VERILATOR_SRC)
 
 TARGET       ?= test.x
 
@@ -23,10 +23,10 @@ INCLUDE_PATH += $(SYSTEMC_HOME)/include
 LIB_PATH     ?=
 LIB_PATH     += ./lib 
 LIB_PATH     += ../../isa_sim
-LIBS          = -lisa_sim -lsyscverilated -lelf -lbfd
+LIBS          = -lisa_sim -lsyscverilated -lelf -lbfd -lz -L/usr/local/systemc-2.3.3/lib-linux64
 
 # Flags
-CFLAGS       ?= -fpic -O2
+CFLAGS       ?= -fpic -O2 -std=c++20
 CFLAGS       += $(patsubst %,-I%,$(INCLUDE_PATH))
 CFLAGS       += -DVM_TRACE=1
 LDFLAGS      ?= -O2

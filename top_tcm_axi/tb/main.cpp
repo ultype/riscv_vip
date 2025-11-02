@@ -60,11 +60,13 @@ static void exit_override(void)
 //--------------------------------------------------------------------
 // vl_finish: Handling of verilog $finish
 //--------------------------------------------------------------------
+/*
 void vl_finish (const char* filename, int linenum, const char* hier)
 { 
     // Jump to exit handler!
     exit(0);    
 }
+*/
 //-----------------------------------------------------------------
 // sigint_handler
 //-----------------------------------------------------------------
