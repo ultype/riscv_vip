@@ -5,16 +5,20 @@ module soc_top#(
 )
 (
     clk,
-    nrst
+    core_nrst,
+    sram_nrst
 );
 
 // parameters
 localparam STRB_WIDTH = DATA_WIDTH / 8;
 
 //signal
-input clk, nrst;
-wire rst;
-assign rst = !nrst;
+input clk, core_nrst, sram_nrst;
+wire core_rst, sram_rst;
+
+
+assign core_rst = !core_nrst;
+assign sram_rst = !sram_nrst;
 
 // core Inputs
 wire           axi_i_awready_i;
@@ -161,8 +165,8 @@ riscv_tcm_wrapper #(
 ) soc0 (
     // Inputs
      .clk_i(clk),
-     .rst_i(rst),
-     .rst_cpu_i(rst),
+     .rst_i(sram_rst),
+     .rst_cpu_i(core_rst),
      .axi_i_awready_i(axi_i_awready_i),
      .axi_i_wready_i(axi_i_wready_i),
      .axi_i_bvalid_i(axi_i_bvalid_i),
@@ -229,30 +233,30 @@ axi_s2m2_interconnect #
     .STRB_WIDTH(DATA_WIDTH/8),
     .ID_WIDTH(1),
     .AWUSER_ENABLE(0),
-    .AWUSER_WIDTH(1),
+    .AWUSER_WIDTH(4),
     .WUSER_ENABLE(0),
-    .WUSER_WIDTH(1),
+    .WUSER_WIDTH(4),
     .BUSER_ENABLE(0),
-    .BUSER_WIDTH(1),
+    .BUSER_WIDTH(4),
     .ARUSER_ENABLE(0),
-    .ARUSER_WIDTH(1),
+    .ARUSER_WIDTH(4),
     .RUSER_ENABLE(0),
-    .RUSER_WIDTH(1),
+    .RUSER_WIDTH(4),
     .FORWARD_ID(0),
-    .M_REGIONS(1),
-    .M00_BASE_ADDR(0),
-    .M00_ADDR_WIDTH(32/*{M_REGIONS{32'd24}}*/),
+    .M_REGIONS(1),    
+    .M00_BASE_ADDR(32'h00000000),
+    .M00_ADDR_WIDTH(32'd20),
     .M00_CONNECT_READ(2'b11),
     .M00_CONNECT_WRITE(2'b11),
     .M00_SECURE(1'b0),
-    .M01_BASE_ADDR(0),
-    .M01_ADDR_WIDTH(32/*{M_REGIONS{32'd24}}*/),
+    .M01_BASE_ADDR(32'h00400000),
+    .M01_ADDR_WIDTH(32'd20),
     .M01_CONNECT_READ(2'b11),
     .M01_CONNECT_WRITE(2'b11),
     .M01_SECURE(1'b0)
 ) axi_s2m2_interconnect (
     .clk(clk),
-    .rst(rst),
+    .rst(core_rst),
     /* AXI slave interface */
     .s00_axi_awid(axi_i_awid_o),
     .s00_axi_awaddr(axi_i_awaddr_o),
@@ -445,9 +449,9 @@ axi_ram #
     .ID_WIDTH(ID_WIDTH),
     // Extra pipeline register on output
     .PIPELINE_OUTPUT(0)
-) i_ram (
+) iram (
     .clk(clk),
-    .rst(rst),
+    .rst(sram_rst),
     .s_axi_awid(s00_axi_awid),
     .s_axi_awaddr(s00_axi_awaddr),
     .s_axi_awlen(s00_axi_awlen),
@@ -498,9 +502,9 @@ axi_ram #
     .ID_WIDTH(ID_WIDTH),
     // Extra pipeline register on output
     .PIPELINE_OUTPUT(0)
-) d_ram (
+) dram (
     .clk(clk),
-    .rst(rst),
+    .rst(sram_rst),
     .s_axi_awid(s01_axi_awid),
     .s_axi_awaddr(s01_axi_awaddr),
     .s_axi_awlen(s01_axi_awlen),
