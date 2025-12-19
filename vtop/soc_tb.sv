@@ -1,13 +1,11 @@
 `timescale 1ns / 100ps
 
 `define PERIOD 10     
-`define SIM_TIME 999   
+`define SIM_TIME 999999
 
 module soc_tb();
     reg clk;
     reg core_nrst, sram_nrst;
-    reg [31:0] idata [0:1024];
-    reg [31:0] ddata [0:1024];
     reg [31:0] tdata;
 
     integer file;
@@ -80,14 +78,14 @@ module soc_tb();
             scan_result = $fscanf(file, "%h", tdata);
             // scan_result returns the number of items matched (should be 1)
             if (scan_result == 1) begin
-                 soc_top_dut.dram.mem[count] = tdata;
+                soc_top_dut.dram.mem[count] = tdata;
                 count = count + 1;
             end
         end
         // 3. Close file
         $fclose(file);
         $display("Loaded idata from dmem.hex:%4d", count);
-        
+
         // must clear cache ram
         for (i = 0; i < 16384; i = i + 1) begin
             soc_top_dut.soc0.u_tcm.u_ram.ram[i] = 32'd0;
