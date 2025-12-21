@@ -58,6 +58,7 @@ module soc_tb();
             // scan_result returns the number of items matched (should be 1)
             if (scan_result == 1) begin
                 soc_top_dut.iram.mem[count] = tdata;
+                soc_top_dut.soc0.u_tcm.u_ram.ram[count] = tdata;
                 count = count + 1;
             end
         end
@@ -87,8 +88,9 @@ module soc_tb();
         $display("Loaded idata from dmem.hex:%4d", count);
 
         // must clear cache ram
-        for (i = 0; i < 16384; i = i + 1) begin
-            soc_top_dut.soc0.u_tcm.u_ram.ram[i] = 32'd0;
+        for ( ; count < 16384; count = count + 1) begin
+            soc_top_dut.dram.mem[count] = 0;
+            count = count + 1;
         end
 
         $display("Start Riscv Simulation ...");
