@@ -355,36 +355,53 @@ always @* begin
 end
 
 always @(posedge clk) begin
-    read_state_reg <= read_state_next;
+        
 
-    read_id_reg <= read_id_next;
-    read_addr_reg <= read_addr_next;
-    read_count_reg <= read_count_next;
-    read_size_reg <= read_size_next;
-    read_burst_reg <= read_burst_next;
-
-    s_axi_arready_reg <= s_axi_arready_next;
-    s_axi_rid_reg <= s_axi_rid_next;
-    s_axi_rlast_reg <= s_axi_rlast_next;
-    s_axi_rvalid_reg <= s_axi_rvalid_next;
+    
 
     if (mem_rd_en) begin
         s_axi_rdata_reg <= mem[read_addr_valid];
     end
 
-    if (!s_axi_rvalid_pipe_reg || s_axi_rready) begin
-        s_axi_rid_pipe_reg <= s_axi_rid_reg;
-        s_axi_rdata_pipe_reg <= s_axi_rdata_reg;
-        s_axi_rlast_pipe_reg <= s_axi_rlast_reg;
-        s_axi_rvalid_pipe_reg <= s_axi_rvalid_reg;
-    end
+
 
     if (rst) begin
         read_state_reg <= READ_STATE_IDLE;
 
         s_axi_arready_reg <= 1'b0;
         s_axi_rvalid_reg <= 1'b0;
+        
+        read_id_reg     <= 0;
+        read_addr_reg   <= 0;
+        read_count_reg  <= 0;
+        read_size_reg   <= 0;
+        read_burst_reg  <= 0;
+        
+        s_axi_rid_reg   <= 0;
+        s_axi_rlast_reg <= 0;
+
         s_axi_rvalid_pipe_reg <= 1'b0;
+    end else begin
+        read_state_reg <= read_state_next;
+
+        s_axi_arready_reg <= s_axi_arready_next;
+        s_axi_rvalid_reg <= s_axi_rvalid_next;
+
+        read_id_reg <= read_id_next;
+        read_addr_reg <= read_addr_next;
+        read_count_reg <= read_count_next;
+        read_size_reg <= read_size_next;
+        read_burst_reg <= read_burst_next;
+
+        s_axi_rid_reg <= s_axi_rid_next;
+        s_axi_rlast_reg <= s_axi_rlast_next;
+
+        if (!s_axi_rvalid_pipe_reg || s_axi_rready) begin
+            s_axi_rid_pipe_reg <= s_axi_rid_reg;
+            s_axi_rdata_pipe_reg <= s_axi_rdata_reg;
+            s_axi_rlast_pipe_reg <= s_axi_rlast_reg;
+            s_axi_rvalid_pipe_reg <= s_axi_rvalid_reg;
+        end
     end
 end
 

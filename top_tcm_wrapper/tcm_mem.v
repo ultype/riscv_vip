@@ -165,7 +165,7 @@ u_conv
 //-------------------------------------------------------------
 
 // Mux access to the 2nd port between external access and CPU data access
-wire [13:0] muxed_addr_w = ext_accept_w ? ext_addr_w[15:2] : mem_d_addr_i[15:2];
+wire [21:0] muxed_addr_w = ext_accept_w ? ext_addr_w[23:2] : mem_d_addr_i[23:2];
 wire [31:0] muxed_data_w = ext_accept_w ? ext_write_data_w : mem_d_data_wr_i;
 wire [3:0]  muxed_wr_w   = ext_accept_w ? ext_wr_w         : mem_d_wr_i;
 wire [31:0] data_r_w;
@@ -176,7 +176,7 @@ u_ram
     // Instruction fetch
      .clk0_i(clk_i)
     ,.rst0_i(rst_i)
-    ,.addr0_i(mem_i_pc_i[15:2])
+    ,.addr0_i(mem_i_pc_i[23:2])
     ,.data0_i(32'b0)
     ,.wr0_i(4'b0)
 

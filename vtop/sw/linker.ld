@@ -4,9 +4,10 @@ ENTRY( _start )
 
 MEMORY
 {
-   /* Single 64KB Block for EVERYTHING */
+   /* Single 16MB Block for EVERYTHING */
    /* (rwx) = Read, Write, Execute */
-   RAM (rwx) : ORIGIN = 0x00000000, LENGTH = 64K
+   /* ORIGIN = 0, LENGTH = 16M (0x01000000 bytes) */
+   RAM (rwx) : ORIGIN = 0x00000000, LENGTH = 16M
 }
 
 SECTIONS
@@ -61,8 +62,8 @@ SECTIONS
   _end = .;
   _heap_start = .;
 
-  /* Stack Top is pinned to the very top of the 64KB RAM */
-  /* Address: 0x00010000 */
+  /* Stack Top is pinned to the very top of the 16MB RAM */
+  /* New Address: 0x01000000 */
   . = ALIGN(16);
   _stack_top = ORIGIN(RAM) + LENGTH(RAM);
 }
