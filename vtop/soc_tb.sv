@@ -57,7 +57,6 @@ module soc_tb();
             scan_result = $fscanf(file, "%h", tdata);
             // scan_result returns the number of items matched (should be 1)
             if (scan_result == 1) begin
-                soc_top_dut.iram.mem[count] = tdata;
                 soc_top_dut.soc0.u_tcm.u_ram.ram[count] = tdata;
                 count = count + 1;
             end
@@ -88,8 +87,9 @@ module soc_tb();
         $display("Loaded idata from dmem.hex:%4d", count);
 
         // must clear cache ram
-        for ( ; count < 16384; count = count + 1) begin
-            soc_top_dut.dram.mem[count] = 0;
+        for ( count=0; count < 16384; count = count + 1) begin
+            soc_top_dut.dram.mem[count] = 32'd0;
+            soc_top_dut.iram.mem[count] = 32'd0;
             count = count + 1;
         end
 

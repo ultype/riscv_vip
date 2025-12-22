@@ -1,38 +1,25 @@
+// In main.c
 #include <stdint.h>
+volatile int mcause_reg = 0;
+// This function is called by assembly when an interrupt occurs
+void trap_handler(void) {
+    // 1. Read mcause to see WHY we are here
+    uint32_t mcause;
+    asm volatile("csrr %0, mcause" : "=r"(mcause));
 
-// Global variable (Lives in .data)
-volatile int counter = 0; 
-
-// Uninitialized variable (Lives in .bss, must be 0 at start)
-volatile int flag;        
-
-// The Trap Handler
-uintptr_t handle_trap(uintptr_t mcause, uintptr_t mepc) {
-    if (mcause & (1UL << 31)) { // For RV32 (use 1UL<<63 for RV64)
-        // It's an interrupt
-        counter++; 
-        return mepc; // Return to same instruction
+    // 2. Check if it's an interrupt (MSB is 1) or Exception (MSB is 0)
+    if (mcause & 0x80000000) {
+        // It's an Interrupt (e.g., Timer, External)
     } else {
-        // It's an exception (error), skip instruction
-        return mepc + 4; 
+        // It's an Exception (e.g., Illegal Instruction)
     }
 }
 
 int main() {
-    // Local variable (Lives on Stack)
-    int local_var = 10;
-    
-    // Test BSS (If this fails, start.s didn't clear BSS correctly)
-    if (flag != 0) {
-        // Error state
-        while(1); 
-    }
-
-    // Main loop
-    while (1) {
-        counter++;
-        local_var++;
-    }
-    
+	volatile int count = 0;
+	while(count<10){
+		count++;
+	}	
+    // ... your code ...
     return 0;
 }

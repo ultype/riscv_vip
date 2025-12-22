@@ -49,9 +49,9 @@ module riscv_tcm_wrapper
 #(
      parameter BOOT_VECTOR      = 0
     ,parameter CORE_ID          = 0
-    ,parameter TCM_MEM_BASE     = 0
-    ,parameter MEM_CACHE_ADDR_MIN = 0
-    ,parameter MEM_CACHE_ADDR_MAX = 32'hffffffff
+    ,parameter TCM_MEM_BASE       = 32'h80000000
+    ,parameter MEM_CACHE_ADDR_MIN = 32'h00000000
+    ,parameter MEM_CACHE_ADDR_MAX = 32'h7fffffff
 )
 //-----------------------------------------------------------------
 // Ports
