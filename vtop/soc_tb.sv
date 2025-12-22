@@ -66,7 +66,6 @@ module soc_tb();
         end
         // 3. Close file
         $fclose(file);
-
         $display("Loaded idata from ram.hex:%4d", count);
 
         // must clear cache ram
@@ -88,7 +87,7 @@ module soc_tb();
 
 always@(posedge clk)begin
     if(start==1 && soc_top_dut.dram.mem[0] != 0)begin
-        $display("Simulation Pass finished at %0t ns", $time);
+        $display("Simulation Pass finished at %0t cycles", $time/`PERIOD);
         $finish;
     end
 end
