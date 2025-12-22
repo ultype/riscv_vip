@@ -53,6 +53,7 @@ module riscv_core
     ,parameter EXTRA_DECODE_STAGE = 0
     ,parameter MEM_CACHE_ADDR_MIN = 32'h80000000
     ,parameter MEM_CACHE_ADDR_MAX = 32'h8fffffff
+    ,parameter BOOT_ADDR = 32'h0
 )
 //-----------------------------------------------------------------
 // Ports
@@ -605,7 +606,8 @@ u_issue
 
 riscv_fetch
 #(
-     .SUPPORT_MMU(SUPPORT_MMU)
+     .SUPPORT_MMU(SUPPORT_MMU),
+     .BOOT_ADDR(BOOT_ADDR)
 )
 u_fetch
 (

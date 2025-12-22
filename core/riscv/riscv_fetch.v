@@ -44,7 +44,8 @@ module riscv_fetch
 // Params
 //-----------------------------------------------------------------
 #(
-     parameter SUPPORT_MMU      = 1
+     parameter SUPPORT_MMU    = 1,
+     parameter BOOT_ADDR      = 32'h0
 )
 //-----------------------------------------------------------------
 // Ports
@@ -180,7 +181,9 @@ wire        fetch_resp_drop_w;
 
 always @ (posedge clk_i or posedge rst_i)
 if (rst_i)
-    pc_f_q  <= 32'b0;
+    // TO-DO
+    // pc_f_q <= 32'b0; 
+    pc_f_q   <= BOOT_ADDR;
 // Branch request
 else if (branch_w && ~stall_w)
     pc_f_q  <= branch_pc_w;

@@ -319,10 +319,10 @@ always @* begin
             s_axi_arready_next = 1'b1;
 
             if (s_axi_arready && s_axi_arvalid) begin
-                read_id_next = s_axi_arid;
-                read_addr_next = s_axi_araddr;
+                read_id_next    = s_axi_arid;
+                read_addr_next  = s_axi_araddr;
                 read_count_next = s_axi_arlen;
-                read_size_next = s_axi_arsize < $clog2(STRB_WIDTH) ? s_axi_arsize : $clog2(STRB_WIDTH);
+                read_size_next  = 3'b010;//s_axi_arsize < $clog2(STRB_WIDTH) ? s_axi_arsize : $clog2(STRB_WIDTH);
                 read_burst_next = s_axi_arburst;
 
                 s_axi_arready_next = 1'b0;
