@@ -79,8 +79,8 @@ module soc_tb();
         $display("Start Riscv Simulation ...");
         #(`PERIOD * 20);
         core_nrst = 1'd1;
-        #(`SIM_TIME);
         start = 1'd1;
+        #(`SIM_TIME);
         $display("Simulation Error finished at %0t ns", $time);
         $finish;
     end
