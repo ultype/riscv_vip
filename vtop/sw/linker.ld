@@ -4,41 +4,45 @@ ENTRY( _start )
 
 MEMORY
 {
-  /* Instruction Memory: 64MB starting at 0x80000000 */
-  IMEM (rx) : ORIGIN = 0x80000000, LENGTH = 8K
-
-  /* Data Memory: 64MB starting at 0x00000000 */
-  DMEM (rw) : ORIGIN = 0x00000000, LENGTH = 8K
+   /* Single 64KB Block for EVERYTHING */
+   /* (rwx) = Read, Write, Execute */
+   RAM (rwx) : ORIGIN = 0x00000000, LENGTH = 64K
 }
 
 SECTIONS
 {
-  /* --- Code Section (IMEM) --- */
+  /* ================================================= */
+  /* 1. CODE (.text) - At the very bottom              */
+  /* ================================================= */
   .text : {
-    *(.text.init)
+    *(.text.init)   /* Boot code at 0x00000000 */
     *(.text)
     *(.text.*)
-  } > IMEM
+  } > RAM
 
-  /* --- Data Sections (DMEM) --- */
-  
-  /* 1. Read-Only Data */
+  /* ================================================= */
+  /* 2. READ-ONLY DATA (.rodata)                       */
+  /* ================================================= */
   .rodata : {
     . = ALIGN(4);
     *(.rodata)
     *(.rodata.*)
-  } > DMEM
+  } > RAM
 
-  /* 2. Initialized Data */
+  /* ================================================= */
+  /* 3. INITIALIZED DATA (.data)                       */
+  /* ================================================= */
   .data : {
     . = ALIGN(4);
     __global_pointer$ = . + 0x800;
     *(.data)
     *(.data.*)
     *(.sdata)
-  } > DMEM
+  } > RAM
 
-  /* 3. BSS Section */
+  /* ================================================= */
+  /* 4. UNINITIALIZED DATA (.bss)                      */
+  /* ================================================= */
   .bss : {
     . = ALIGN(4);
     _bss_start = .;
@@ -47,30 +51,18 @@ SECTIONS
     *(COMMON)
     . = ALIGN(4);
     _bss_end = .;
-  } > DMEM
+  } > RAM
 
-  /* ------------------------------------------------------------------ */
-  /* 4. HEAP SECTION (Fixed 32KB)                                       */
-  /* ------------------------------------------------------------------ */
-  .heap : {
-    . = ALIGN(16);
-    _heap_start = .;    /* Start of Heap (used by malloc/sbrk) */
-    _end = .;           /* Standard symbol for libc */
-    
-    . = . + 32K;        /* RESERVE 32KB SPACE HERE */
-    
-    _heap_end = .;      /* Hard limit for Heap */
-  } > DMEM
+  /* ================================================= */
+  /* 5. HEAP & STACK                                   */
+  /* ================================================= */
+  /* Heap starts right after BSS */
+  . = ALIGN(16);
+  _end = .;
+  _heap_start = .;
 
-  /* ------------------------------------------------------------------ */
-  /* 5. STACK SECTION (Fixed 32KB)                                      */
-  /* ------------------------------------------------------------------ */
-  .stack : {
-    . = ALIGN(16);
-    _stack_bottom = .;  /* Bottom of stack (Stack Overflow triggers here) */
-    
-    . = . + 32K;        /* RESERVE 32KB SPACE HERE */
-    
-    _stack_top = .;     /* Initial Stack Pointer (SP) value */
-  } > DMEM
+  /* Stack Top is pinned to the very top of the 64KB RAM */
+  /* Address: 0x00010000 */
+  . = ALIGN(16);
+  _stack_top = ORIGIN(RAM) + LENGTH(RAM);
 }

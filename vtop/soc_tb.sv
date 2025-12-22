@@ -48,7 +48,7 @@ module soc_tb();
         sram_nrst = 1'd1;
 
         //load imem and dmem
-        file = $fopen("./sw/imem.hex", "r");    
+        file = $fopen("./sw/ram.hex", "r");    
         if (file == 0) begin
             $display("Error: Could not open file.");
             $finish;
@@ -67,27 +67,7 @@ module soc_tb();
         // 3. Close file
         $fclose(file);
 
-        $display("Loaded idata from imem.hex:%4d", count);
-
-        file = $fopen("./sw/dmem.hex", "r");    
-        if (file == 0) begin
-            $display("Error: Could not open file.");
-            $finish;
-        end
-        count = 0;
-        // 2. Loop until End of File (EOF)
-        while (!$feof(file)) begin
-            // Read one hex value (%h) into temp_data
-            scan_result = $fscanf(file, "%h", tdata);
-            // scan_result returns the number of items matched (should be 1)
-            if (scan_result == 1) begin
-                soc_top_dut.dram.mem[count] = tdata;
-                count = count + 1;
-            end
-        end
-        // 3. Close file
-        $fclose(file);
-        $display("Loaded idata from dmem.hex:%4d", count);
+        $display("Loaded idata from ram.hex:%4d", count);
 
         // must clear cache ram
         for ( count=0; count < 16384; count = count + 1) begin
@@ -107,7 +87,7 @@ module soc_tb();
 
 
 always@(posedge clk)begin
-    if(start && soc_top_dut.dram.mem[0] == 32'd1)begin
+    if(start==1 && soc_top_dut.dram.mem[0] != 0)begin
         $display("Simulation Pass finished at %0t ns", $time);
         $finish;
     end
