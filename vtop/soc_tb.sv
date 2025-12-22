@@ -5,6 +5,7 @@
 
 module soc_tb();
     reg clk;
+    reg start;
     reg core_nrst, sram_nrst;
     reg [31:0] tdata;
 
@@ -20,7 +21,8 @@ module soc_tb();
     soc_top#(
     .DATA_WIDTH(32),
     .ADDR_WIDTH(32),
-    .ID_WIDTH(1)
+    .ID_WIDTH(1),
+    .BOOT_ADDR(32'h00000000) 
     ) soc_top_dut
     (
         .clk(clk),
@@ -39,6 +41,7 @@ module soc_tb();
         $dumpvars(0, soc_top_dut);
 
         //read imem.hex and dmem.hex
+        start     = 1'd0;
         core_nrst = 1'd0;
         sram_nrst = 1'd0;
         #(`PERIOD * 20);
@@ -97,7 +100,17 @@ module soc_tb();
         #(`PERIOD * 20);
         core_nrst = 1'd1;
         #(`SIM_TIME);
-        $display("Simulation finished at %0t ns", $time);
+        start = 1'd1;
+        $display("Simulation Error finished at %0t ns", $time);
         $finish;
     end
+
+
+always@(posedge clk)begin
+    if(start && soc_top_dut.dram.mem[0] == 32'd1)begin
+        $display("Simulation Pass finished at %0t ns", $time);
+        $finish;
+    end
+end
+
 endmodule

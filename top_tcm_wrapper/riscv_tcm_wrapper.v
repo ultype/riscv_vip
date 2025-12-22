@@ -52,6 +52,7 @@ module riscv_tcm_wrapper
     ,parameter TCM_MEM_BASE       = 32'h80000000
     ,parameter MEM_CACHE_ADDR_MIN = 32'h00000000
     ,parameter MEM_CACHE_ADDR_MAX = 32'h7fffffff
+    ,parameter BOOT_ADDR          = 32'h00000000
 )
 //-----------------------------------------------------------------
 // Ports
@@ -176,8 +177,16 @@ wire           dport_accept_w;
 
 riscv_core
 #(
-     .MEM_CACHE_ADDR_MIN(MEM_CACHE_ADDR_MIN)
-    ,.MEM_CACHE_ADDR_MAX(MEM_CACHE_ADDR_MAX)
+    .SUPPORT_MULDIV(1),
+    .SUPPORT_SUPER(0),
+    .SUPPORT_MMU(0),
+    .SUPPORT_LOAD_BYPASS(1),
+    .SUPPORT_MUL_BYPASS(1),
+    .SUPPORT_REGFILE_XILINX(0),
+    .EXTRA_DECODE_STAGE(0),
+    .MEM_CACHE_ADDR_MIN(MEM_CACHE_ADDR_MIN),
+    .MEM_CACHE_ADDR_MAX(MEM_CACHE_ADDR_MAX),
+    .BOOT_ADDR(BOOT_ADDR)
 )
 u_core
 (

@@ -5,10 +5,10 @@ ENTRY( _start )
 MEMORY
 {
   /* Instruction Memory: 64MB starting at 0x80000000 */
-  IMEM (rx) : ORIGIN = 0x80000000, LENGTH = 64M
+  IMEM (rx) : ORIGIN = 0x80000000, LENGTH = 8K
 
   /* Data Memory: 64MB starting at 0x00000000 */
-  DMEM (rw) : ORIGIN = 0x00000000, LENGTH = 64M
+  DMEM (rw) : ORIGIN = 0x00000000, LENGTH = 8K
 }
 
 SECTIONS

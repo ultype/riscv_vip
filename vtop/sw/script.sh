@@ -12,13 +12,7 @@ riscv64-unknown-elf-objcopy -O binary --only-section=.text full.elf imem.bin
 hexdump -v -e '1/4 "%08x" "\n"' imem.bin > imem.hex
 
 # Step 1: Extract raw binary with address shifts
-riscv64-unknown-elf-objcopy -O binary \
-    --remove-section=.text \
-    --set-section-flags .bss=alloc,load,contents \
-    --change-section-lma .data=-0x00400000 \
-    --change-section-lma .rodata=-0x00400000 \
-    --change-section-lma .bss=-0x00400000 \
-    full.elf dmem.bin
+riscv64-unknown-elf-objcopy -O binary full.elf dmem.bin
 
 # Step 2: Format to 32-bit hex per line
 hexdump -v -e '1/4 "%08x" "\n"' dmem.bin > dmem.hex

@@ -1,7 +1,8 @@
 module soc_top#(
     parameter DATA_WIDTH = 32,
     parameter ADDR_WIDTH = 32,
-    parameter ID_WIDTH   = 1
+    parameter ID_WIDTH   = 1,
+    parameter BOOT_ADDR  = 32'h00000000
 )
 (
     clk,
@@ -159,9 +160,10 @@ wire                   s01_axi_rready;
 riscv_tcm_wrapper #(
     .BOOT_VECTOR        (0),
     .CORE_ID            (0),
-    .TCM_MEM_BASE       (0),
-    .MEM_CACHE_ADDR_MIN (0),
-    .MEM_CACHE_ADDR_MAX (32'hffffffff)
+    .TCM_MEM_BASE       (32'h00000000),
+    .MEM_CACHE_ADDR_MIN (32'h00000000),
+    .MEM_CACHE_ADDR_MAX (32'h7fffffff),
+    .BOOT_ADDR          (BOOT_ADDR)
 ) soc0 (
     // Inputs
      .clk_i(clk),

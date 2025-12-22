@@ -1,6 +1,8 @@
 // In main.c
 #include <stdint.h>
+#define DEBUG_BASE 0x90000000
 volatile int mcause_reg = 0;
+static int32_t* DEBUG_FINISH_PTR = (int32_t*) DEBUG_BASE;
 // This function is called by assembly when an interrupt occurs
 void trap_handler(void) {
     // 1. Read mcause to see WHY we are here
@@ -16,10 +18,11 @@ void trap_handler(void) {
 }
 
 int main() {
+	
 	volatile int count = 0;
 	while(count<10){
 		count++;
 	}	
     // ... your code ...
-    return 0;
+    *DEBUG_FINISH_PTR = 1;
 }
