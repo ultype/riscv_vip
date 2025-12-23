@@ -47,15 +47,16 @@ module riscv_top
 // Params
 //-----------------------------------------------------------------
 #(
-     parameter CORE_ID          = 0
-    ,parameter MEM_CACHE_ADDR_MIN = 0
-    ,parameter MEM_CACHE_ADDR_MAX = 32'hffffffff
+    parameter CORE_ID            = 0,
+    parameter MEM_CACHE_ADDR_MIN = 0,
+    parameter MEM_CACHE_ADDR_MAX = 32'hffffffff,
+    parameter BOOT_ADDR          = 32'h0
 )
 //-----------------------------------------------------------------
 // Ports
 //-----------------------------------------------------------------
 (
-    // Inputs
+    // instr Inputs
      input           clk_i
     ,input           rst_i
     ,input           axi_i_awready_i
@@ -69,21 +70,7 @@ module riscv_top
     ,input  [  1:0]  axi_i_rresp_i
     ,input  [  3:0]  axi_i_rid_i
     ,input           axi_i_rlast_i
-    ,input           axi_d_awready_i
-    ,input           axi_d_wready_i
-    ,input           axi_d_bvalid_i
-    ,input  [  1:0]  axi_d_bresp_i
-    ,input  [  3:0]  axi_d_bid_i
-    ,input           axi_d_arready_i
-    ,input           axi_d_rvalid_i
-    ,input  [ 31:0]  axi_d_rdata_i
-    ,input  [  1:0]  axi_d_rresp_i
-    ,input  [  3:0]  axi_d_rid_i
-    ,input           axi_d_rlast_i
-    ,input           intr_i
-    ,input  [ 31:0]  reset_vector_i
-
-    // Outputs
+    // instr output
     ,output          axi_i_awvalid_o
     ,output [ 31:0]  axi_i_awaddr_o
     ,output [  3:0]  axi_i_awid_o
@@ -100,6 +87,22 @@ module riscv_top
     ,output [  7:0]  axi_i_arlen_o
     ,output [  1:0]  axi_i_arburst_o
     ,output          axi_i_rready_o
+    // data input
+    ,input           axi_d_awready_i
+    ,input           axi_d_wready_i
+    ,input           axi_d_bvalid_i
+    ,input  [  1:0]  axi_d_bresp_i
+    ,input  [  3:0]  axi_d_bid_i
+    ,input           axi_d_arready_i
+    ,input           axi_d_rvalid_i
+    ,input  [ 31:0]  axi_d_rdata_i
+    ,input  [  1:0]  axi_d_rresp_i
+    ,input  [  3:0]  axi_d_rid_i
+    ,input           axi_d_rlast_i
+    ,input           intr_i
+    ,input  [ 31:0]  reset_vector_i
+
+    // data Outputs
     ,output          axi_d_awvalid_o
     ,output [ 31:0]  axi_d_awaddr_o
     ,output [  3:0]  axi_d_awid_o
@@ -197,8 +200,9 @@ u_dcache
 
 riscv_core
 #(
-     .MEM_CACHE_ADDR_MIN(MEM_CACHE_ADDR_MIN)
-    ,.MEM_CACHE_ADDR_MAX(MEM_CACHE_ADDR_MAX)
+    .MEM_CACHE_ADDR_MIN(MEM_CACHE_ADDR_MIN),
+    .MEM_CACHE_ADDR_MAX(MEM_CACHE_ADDR_MAX),
+    .BOOT_ADDR(BOOT_ADDR)
 )
 u_core
 (

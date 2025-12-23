@@ -150,12 +150,12 @@ reg s_axi_rlast_pipe_reg = 1'b0;
 reg s_axi_rvalid_pipe_reg = 1'b0;
 
 // (* RAM_STYLE="BLOCK" *)
-reg [DATA_WIDTH-1:0] mem[4*1024*1024-1:0];
+reg [DATA_WIDTH-1:0] mem[16*1024*1024-1:0];
 
-wire [VALID_ADDR_WIDTH-1:0] s_axi_awaddr_valid = s_axi_awaddr[13:2] >> (ADDR_WIDTH - VALID_ADDR_WIDTH);
-wire [VALID_ADDR_WIDTH-1:0] s_axi_araddr_valid = s_axi_araddr[13:2] >> (ADDR_WIDTH - VALID_ADDR_WIDTH);
-wire [VALID_ADDR_WIDTH-1:0] read_addr_valid    = {18'b0, read_addr_reg[13:2]};//>> (ADDR_WIDTH - VALID_ADDR_WIDTH);
-wire [VALID_ADDR_WIDTH-1:0] write_addr_valid   = {18'b0, write_addr_reg[13:2]};//>> (ADDR_WIDTH - VALID_ADDR_WIDTH);
+wire [VALID_ADDR_WIDTH-1:0] s_axi_awaddr_valid = s_axi_awaddr[23:0] >> (ADDR_WIDTH - VALID_ADDR_WIDTH);
+wire [VALID_ADDR_WIDTH-1:0] s_axi_araddr_valid = s_axi_araddr[23:0] >> (ADDR_WIDTH - VALID_ADDR_WIDTH);
+wire [VALID_ADDR_WIDTH-1:0] read_addr_valid    = {8'b0, read_addr_reg[23:2]};//>> (ADDR_WIDTH - VALID_ADDR_WIDTH);
+wire [VALID_ADDR_WIDTH-1:0] write_addr_valid   = {8'b0, write_addr_reg[23:2]};//>> (ADDR_WIDTH - VALID_ADDR_WIDTH);
 
 assign s_axi_awready = s_axi_awready_reg;
 assign s_axi_wready = s_axi_wready_reg;
@@ -223,7 +223,7 @@ always @* begin
             if (s_axi_wready && s_axi_wvalid) begin
                 mem_wr_en = 1'b1;
                 if (write_burst_reg != 2'b00) begin
-                    write_addr_next = write_addr_reg + (1 << write_size_reg);
+                    write_addr_next = write_addr_reg + (1 << (write_size_reg-1));
                 end
                 write_count_next = write_count_reg - 1;
                 if (write_count_reg > 0) begin
@@ -338,7 +338,7 @@ always @* begin
                 s_axi_rid_next = read_id_reg;
                 s_axi_rlast_next = read_count_reg == 0;
                 if (read_burst_reg != 2'b00) begin
-                    read_addr_next = read_addr_reg + (1 << read_size_reg);
+                    read_addr_next = read_addr_reg + 1;//(1 << (read_size_reg-1));
                 end
                 read_count_next = read_count_reg - 1;
                 if (read_count_reg > 0) begin
